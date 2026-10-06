@@ -7,13 +7,14 @@ optional_openapi_status: not_started
 
 ## Current build batch
 
-Batch 3 — Task API
+Batch 4 — Error handling and edge cases
 
 ## Completed batches
 
 - Batch 0 — Symfony 6.4.47, PHP 8.3.33 + PostgreSQL 16 Docker Compose stack; verified app startup, Symfony console, database connection and HTTP response.
 - Batch 1 — Task/Status entities, Task→Status relation, repositories, unique status name and initial migration with seeded statuses.
 - Batch 2 — Status list/get/create/delete endpoints, DTO validation, duplicate-name conflict and in-use deletion guard.
+- Batch 3 — Task create/list/filter/get/delete/status-update endpoints; default `new` status and timestamp updates.
 
 ## Working features
 
@@ -22,6 +23,7 @@ Batch 3 — Task API
 - Task references Status through a required ManyToOne relation; deleting a referenced row is restricted by PostgreSQL.
 - Initial statuses `new`, `in_progress`, `done` are present.
 - Status API supports list, get, create and delete.
+- Task API supports create/list/filter/get/delete/status update.
 
 ## Verification
 
@@ -34,19 +36,21 @@ Batch 3 — Task API
 - `docker compose exec -T app php bin/console doctrine:query:sql 'SELECT name, title FROM status ORDER BY id'` — all three initial statuses present.
 - `docker compose exec -T app php bin/console lint:container` — all services are wired.
 - Status endpoint smoke checks: list/get `200`, create `201`, delete `204`, missing ID `404`, malformed JSON `400`, validation `422`, duplicate name `409`.
+- Task endpoint smoke checks: create `201` with default `new`, list/filter/get `200`, status change `200`, delete `204`, missing task/status `404`, used-status deletion `409`.
+- Status change updates `updatedAt`; timestamps are stored and returned at whole-second precision by Doctrine DBAL.
 
 ## Git
 
-Last commit: 727b0e3 feat(domain): Add task and status entities; Batch 2 commit pending
+Last commit: 62f4457 feat(status): Implement status API; Batch 3 commit pending
 Repository: local `main`; GitHub identity configured from authenticated account
 
 ## Known issues
 
-Task endpoints are not implemented yet.
+Verify wrong input types and malformed request edge cases; ensure JSON errors remain consistent.
 
 ## Next action
 
-Implement Batch 3: Task create/list/filter/get/delete/status update endpoints.
+Complete Batch 4 edge-case checks, then Batch 5 README and fresh-run verification.
 
 ## Handoff rule
 

@@ -23,4 +23,15 @@ class TaskRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function findByStatusName(string $statusName): array
+    {
+        return $this->createQueryBuilder('task')
+            ->join('task.status', 'status')
+            ->andWhere('status.name = :name')
+            ->setParameter('name', $statusName)
+            ->orderBy('task.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
