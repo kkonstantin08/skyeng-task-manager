@@ -1,0 +1,42 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Task Manager API
+            version: 1.0.0
+        components:
+            schemas:
+                Task:
+                    type: object
+                    required: [id, title, description, status, created_at, updated_at]
+                    properties:
+                        id: { type: integer, format: int64 }
+                        title: { type: string, maxLength: 255 }
+                        description: { type: string, nullable: true, maxLength: 5000 }
+                        status: { type: string }
+                        created_at: { type: string, format: date-time }
+                        updated_at: { type: string, format: date-time }
+                Status:
+                    type: object
+                    required: [id, name, title]
+                    properties:
+                        id: { type: integer, format: int64 }
+                        name: { type: string, maxLength: 50 }
+                        title: { type: string, maxLength: 100 }
+                ApiError:
+                    type: object
+                    required: [error]
+                    properties:
+                        error: { type: string }
+                ValidationError:
+                    type: object
+                    required: [errors]
+                    properties:
+                        errors:
+                            type: object
+                            additionalProperties:
+                                type: array
+                                items: { type: string }
+    areas:
+        default:
+            path_patterns:
+                - ^/api/(tasks|statuses)(/|$)

@@ -13,6 +13,11 @@ docker compose exec app php bin/console doctrine:migrations:migrate --no-interac
 
 API будет доступно по адресу `http://localhost:8000`.
 
+## Документация API
+
+Swagger UI: http://localhost:8000/api/doc
+OpenAPI JSON: http://localhost:8000/api/doc.json
+
 ```sh
 docker compose ps
 docker compose logs -f app
