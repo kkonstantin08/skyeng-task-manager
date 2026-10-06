@@ -54,7 +54,10 @@ final class StatusController
             return new JsonResponse(['error' => 'Status name already exists'], JsonResponse::HTTP_CONFLICT);
         }
 
-        return new JsonResponse(self::serialize($status), JsonResponse::HTTP_CREATED);
+        $response = new JsonResponse(self::serialize($status), JsonResponse::HTTP_CREATED);
+        $response->headers->set('Location', '/api/statuses/'.$status->getId());
+
+        return $response;
     }
 
     #[Route('/{id<\\d+>}', methods: ['DELETE'])]

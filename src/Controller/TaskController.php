@@ -73,7 +73,10 @@ final class TaskController
             return new JsonResponse(['error' => 'Default status not found'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new JsonResponse(self::serialize($task), JsonResponse::HTTP_CREATED);
+        $response = new JsonResponse(self::serialize($task), JsonResponse::HTTP_CREATED);
+        $response->headers->set('Location', '/api/tasks/'.$task->getId());
+
+        return $response;
     }
 
     #[Route('/{id<\\d+>}/status', methods: ['PATCH'])]
