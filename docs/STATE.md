@@ -1,7 +1,7 @@
 # Repository State
 
 mode: BUILD
-mandatory_build_status: in_progress
+mandatory_build_status: complete
 optional_tests_status: not_started
 optional_openapi_status: not_started
 
@@ -16,7 +16,7 @@ Batch 5 — README and fresh-run verification
 - Batch 2 — Status list/get/create/delete endpoints, DTO validation, duplicate-name conflict and in-use deletion guard.
 - Batch 3 — Task create/list/filter/get/delete/status-update endpoints; default `new` status and timestamp updates.
 - Batch 4 — Hardened JSON parsing and validation errors; query parameter type check; consistent `400/404/409/422` responses.
-- README drafted with startup, endpoints, architecture choices, server trade-off, AI usage and time placeholder.
+- Batch 5 — README startup flow completed; clean-volume fresh-run passed, including all mandatory endpoint smoke checks.
 
 ## Working features
 
@@ -27,6 +27,7 @@ Batch 5 — README and fresh-run verification
 - Status API supports list, get, create and delete.
 - Task API supports create/list/filter/get/delete/status update.
 - Malformed JSON, wrong field types, invalid query types and required fields return JSON errors.
+- README contains the tested startup commands, endpoint examples, architecture choices and submission placeholders.
 
 ## Verification
 
@@ -42,20 +43,22 @@ Batch 5 — README and fresh-run verification
 - Task endpoint smoke checks: create `201` with default `new`, list/filter/get `200`, status change `200`, delete `204`, missing task/status `404`, used-status deletion `409`.
 - Status change updates `updatedAt`; timestamps are stored and returned at whole-second precision by Doctrine DBAL.
 - Edge smoke checks: query array and non-object JSON `422`; invalid description and missing title `422`; used-status deletion `409`; malformed PATCH for a missing Task returns `404`.
-- Fresh-run verification remains pending.
+- Fresh-run: `docker compose down --volumes`, README `docker compose up --build -d`, README migration command; 18 HTTP endpoint/error assertions passed on the clean database.
+- `docker compose exec -T app php bin/console doctrine:schema:validate` — mappings and database schema are in sync after fresh migration.
+- `docker compose exec -T app php bin/console lint:container` — all services are wired after fresh run.
 
 ## Git
 
-Last commit: 31ff24c fix(api): Harden validation and errors; Batch 5 commit pending
+Last commit: 918c8b4 docs: Complete setup and architecture guide; fresh-run state commit pending
 Repository: local `main`; GitHub identity configured from authenticated account
 
 ## Known issues
 
-Fresh-run verification and public GitHub publication remain pending.
+Optional automated tests and OpenAPI were not added; mandatory scope is complete.
 
 ## Next action
 
-Run the README startup and migration commands against a clean database volume, verify mandatory routes, then publish `main` if GitHub access remains available.
+Create and push the public GitHub repository from authenticated account `kkonstantin08`, then record its URL in this file.
 
 ## Handoff rule
 
