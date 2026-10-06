@@ -37,7 +37,7 @@ final class StatusService
 
     public function delete(Status $status): bool
     {
-        if ($this->tasks->countForStatus($status) > 0) {
+        if ($status->getName() === 'new' || $this->tasks->countForStatus($status) > 0) {
             return false;
         }
 

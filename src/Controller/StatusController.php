@@ -66,7 +66,10 @@ final class StatusController
         }
 
         if (!$service->delete($status)) {
-            return new JsonResponse(['error' => 'Status is used by tasks'], JsonResponse::HTTP_CONFLICT);
+            $error = $status->getName() === 'new'
+                ? 'Default status cannot be deleted'
+                : 'Status is used by tasks';
+            return new JsonResponse(['error' => $error], JsonResponse::HTTP_CONFLICT);
         }
 
         return new Response(status: Response::HTTP_NO_CONTENT);

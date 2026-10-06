@@ -122,8 +122,8 @@ final class TaskController
             'title' => $task->getTitle(),
             'description' => $task->getDescription(),
             'status' => $task->getStatus()->getName(),
-            'createdAt' => $task->getCreatedAt()->format(DATE_ATOM),
-            'updatedAt' => $task->getUpdatedAt()->format(DATE_ATOM),
+            'created_at' => $task->getCreatedAt()->format(DATE_ATOM),
+            'updated_at' => $task->getUpdatedAt()->format(DATE_ATOM),
         ];
     }
 }
