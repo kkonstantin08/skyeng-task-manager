@@ -23,7 +23,14 @@ final class TaskController
     #[Route('', methods: ['GET'])]
     public function index(Request $request, TaskRepository $tasks, StatusRepository $statuses): JsonResponse
     {
-        $statusName = $request->query->get('status');
+        $statusName = $request->query->all()['status'] ?? null;
+        if ($statusName !== null && !is_string($statusName)) {
+            return new JsonResponse(
+                ['errors' => ['status' => ['This value should be of type string.']]],
+                JsonResponse::HTTP_UNPROCESSABLE_ENTITY,
+            );
+        }
+
         if ($statusName !== null) {
             if ($statuses->findOneBy(['name' => $statusName]) === null) {
                 return new JsonResponse(['error' => 'Status not found'], JsonResponse::HTTP_NOT_FOUND);

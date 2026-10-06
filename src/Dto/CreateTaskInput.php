@@ -11,7 +11,6 @@ final class CreateTaskInput
         #[Assert\Type('string')]
         #[Assert\Length(max: 255)]
         public mixed $title,
-        #[Assert\Type('string')]
         #[Assert\Length(max: 5000)]
         public mixed $description,
     ) {

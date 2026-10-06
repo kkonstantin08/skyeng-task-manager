@@ -7,7 +7,7 @@ optional_openapi_status: not_started
 
 ## Current build batch
 
-Batch 4 — Error handling and edge cases
+Batch 5 — README and fresh-run verification
 
 ## Completed batches
 
@@ -15,6 +15,7 @@ Batch 4 — Error handling and edge cases
 - Batch 1 — Task/Status entities, Task→Status relation, repositories, unique status name and initial migration with seeded statuses.
 - Batch 2 — Status list/get/create/delete endpoints, DTO validation, duplicate-name conflict and in-use deletion guard.
 - Batch 3 — Task create/list/filter/get/delete/status-update endpoints; default `new` status and timestamp updates.
+- Batch 4 — Hardened JSON parsing and validation errors; query parameter type check; consistent `400/404/409/422` responses.
 
 ## Working features
 
@@ -24,6 +25,7 @@ Batch 4 — Error handling and edge cases
 - Initial statuses `new`, `in_progress`, `done` are present.
 - Status API supports list, get, create and delete.
 - Task API supports create/list/filter/get/delete/status update.
+- Malformed JSON, wrong field types, invalid query types and required fields return JSON errors.
 
 ## Verification
 
@@ -38,19 +40,20 @@ Batch 4 — Error handling and edge cases
 - Status endpoint smoke checks: list/get `200`, create `201`, delete `204`, missing ID `404`, malformed JSON `400`, validation `422`, duplicate name `409`.
 - Task endpoint smoke checks: create `201` with default `new`, list/filter/get `200`, status change `200`, delete `204`, missing task/status `404`, used-status deletion `409`.
 - Status change updates `updatedAt`; timestamps are stored and returned at whole-second precision by Doctrine DBAL.
+- Edge smoke checks: query array and non-object JSON `422`; invalid description and missing title `422`; used-status deletion `409`; malformed PATCH for a missing Task returns `404`.
 
 ## Git
 
-Last commit: 62f4457 feat(status): Implement status API; Batch 3 commit pending
+Last commit: 0f57735 feat(task): Implement task API; Batch 4 commit pending
 Repository: local `main`; GitHub identity configured from authenticated account
 
 ## Known issues
 
-Verify wrong input types and malformed request edge cases; ensure JSON errors remain consistent.
+Complete setup/endpoint/architecture README, then perform destructive-safe fresh-run verification before public GitHub publication.
 
 ## Next action
 
-Complete Batch 4 edge-case checks, then Batch 5 README and fresh-run verification.
+Write README, remove only this project's named database volume during fresh-run, verify all mandatory routes, then publish `main` if GitHub access remains available.
 
 ## Handoff rule
 
