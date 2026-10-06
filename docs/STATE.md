@@ -7,12 +7,13 @@ optional_openapi_status: not_started
 
 ## Current build batch
 
-Batch 2 — Status API
+Batch 3 — Task API
 
 ## Completed batches
 
 - Batch 0 — Symfony 6.4.47, PHP 8.3.33 + PostgreSQL 16 Docker Compose stack; verified app startup, Symfony console, database connection and HTTP response.
 - Batch 1 — Task/Status entities, Task→Status relation, repositories, unique status name and initial migration with seeded statuses.
+- Batch 2 — Status list/get/create/delete endpoints, DTO validation, duplicate-name conflict and in-use deletion guard.
 
 ## Working features
 
@@ -20,6 +21,7 @@ Batch 2 — Status API
 - PostgreSQL connection works from the app container.
 - Task references Status through a required ManyToOne relation; deleting a referenced row is restricted by PostgreSQL.
 - Initial statuses `new`, `in_progress`, `done` are present.
+- Status API supports list, get, create and delete.
 
 ## Verification
 
@@ -30,19 +32,21 @@ Batch 2 — Status API
 - `docker compose exec -T app php bin/console doctrine:migrations:migrate --no-interaction` — clean schema migrated successfully.
 - `docker compose exec -T app php bin/console doctrine:schema:validate` — mappings and database schema are in sync.
 - `docker compose exec -T app php bin/console doctrine:query:sql 'SELECT name, title FROM status ORDER BY id'` — all three initial statuses present.
+- `docker compose exec -T app php bin/console lint:container` — all services are wired.
+- Status endpoint smoke checks: list/get `200`, create `201`, delete `204`, missing ID `404`, malformed JSON `400`, validation `422`, duplicate name `409`.
 
 ## Git
 
-Last commit: 13e6dac chore: Bootstrap Symfony application; Batch 1 commit pending
+Last commit: 727b0e3 feat(domain): Add task and status entities; Batch 2 commit pending
 Repository: local `main`; GitHub identity configured from authenticated account
 
 ## Known issues
 
-No API routes exist yet; root URL returns expected 404.
+Task endpoints are not implemented yet.
 
 ## Next action
 
-Implement Batch 2: Status list/get/create/delete endpoints and validation.
+Implement Batch 3: Task create/list/filter/get/delete/status update endpoints.
 
 ## Handoff rule
 
