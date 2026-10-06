@@ -4,7 +4,7 @@ namespace App\Dto;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class CreateStatusInput
+final readonly class CreateStatusInput
 {
     public function __construct(
         #[Assert\NotBlank(normalizer: 'trim')]
