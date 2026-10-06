@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ChangeTaskStatusInput
 {
     public function __construct(
-        #[Assert\NotBlank]
+        #[Assert\NotBlank(normalizer: 'trim')]
         #[Assert\Type('string')]
         public mixed $status,
     ) {
