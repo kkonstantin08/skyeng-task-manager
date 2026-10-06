@@ -49,8 +49,8 @@ Batch 5 — README and fresh-run verification
 
 ## Git
 
-Last commit: 918c8b4 docs: Complete setup and architecture guide; fresh-run state commit pending
-Repository: local `main`; GitHub identity configured from authenticated account
+Last commit: 577c858 docs: Record fresh-run verification
+Repository: https://github.com/kkonstantin08/skyeng-task-manager (public, `main` pushed)
 
 ## Known issues
 
@@ -58,7 +58,7 @@ Optional automated tests and OpenAPI were not added; mandatory scope is complete
 
 ## Next action
 
-Create and push the public GitHub repository from authenticated account `kkonstantin08`, then record its URL in this file.
+Mandatory BUILD MODE is complete. Ready to start LEARNING MODE at L0 when requested.
 
 ## Handoff rule
 
