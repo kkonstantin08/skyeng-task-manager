@@ -1,47 +1,70 @@
-# Repository Guide
+# Руководство по репозиторию
 
-## Scope and stack
+Этот документ описывает текущую структуру проекта и соглашения для будущих изменений. Это не журнал разработки. Инструкции по запуску см. в [README.md](README.md), контракт API — в [docs/TASK_SPEC.md](docs/TASK_SPEC.md).
 
-This repository contains a small Task Manager REST API for the Skyeng backend
-internship task. It uses PHP 8.3, Symfony 6.4, Doctrine ORM and Migrations,
-PostgreSQL 16, Docker Compose, and the PHP built-in development server.
+## Проект
 
-## Architecture and conventions
+Task Manager — небольшой REST API на PHP 8.3, Symfony 6.4, Doctrine ORM/Migrations и PostgreSQL 16. Docker Compose запускает приложение и базу данных. Для локальной разработки приложение использует встроенный сервер PHP.
 
-- Keep request handling in controllers, request input and constraints in DTOs,
-  business rules in services, data queries in repositories, and persisted
-  state in entities.
-- Preserve the required `Task` ManyToOne relation to `Status`. New tasks use
-  the `new` status; that status cannot be deleted.
-- Use English for code and identifiers. Prefer explicit types and readable
-  code. Do not add tutorial comments or abstractions that only pass arguments
-  through.
-- Keep the implementation minimal. Do not add optional features, dependencies,
-  or architecture layers without a concrete task requirement.
-- Keep API errors as JSON. Malformed JSON returns `400`, missing resources
-  `404`, conflicts `409`, and semantic validation errors `422`. Validate
-  untrusted input types explicitly.
-- Task JSON timestamps use `created_at` and `updated_at`; PHP names remain
-  camelCase.
+Сосредоточьтесь на решении тестового задания. Не добавляйте инфраструктуру, фреймворки или абстракции, не связанные с ним.
 
-## Checks
+## Структура кода
 
-Run the application and database with `docker compose up --build -d`, then
-apply migrations and validate the Doctrine mapping:
+- `src/Controller/`: HTTP-маршруты, обработка запросов и сериализация ответов.
+- `src/Dto/`: входные объекты и ограничения Symfony Validator.
+- `src/Http/JsonPayload.php`: декодирование JSON и форматирование ошибок валидации.
+- `src/Service/`: бизнес-правила и операции сохранения данных.
+- `src/Repository/`: запросы Doctrine.
+- `src/Entity/`: отображение объектов на базу данных и состояние сущностей.
+- `migrations/`: изменения схемы и начальные данные статусов.
+- `config/packages/nelmio_api_doc.yaml`: общие схемы OpenAPI и конфигурация документации.
+
+Не размещайте доменную логику в контроллерах, если за неё уже отвечает сервис. Для нетривиальных запросов используйте репозитории вместо обращения к базе данных из HTTP-обработчиков.
+
+## Правила API и предметной области
+
+- Сохраняйте обязательную связь «многие к одному» между `Task` и `Status`.
+- Новые задачи получают статус `new`. Начальные статусы: `new`, `in_progress` и `done`.
+- Имя статуса уникально. Статус `new` нельзя удалить; статус, на который ссылается задача, также нельзя удалить.
+- Идентификаторы задач и статусов — числовые. API задач использует **имена** статусов, а не их идентификаторы.
+- Сохраняйте существующие поля ответов и коды состояния HTTP, если изменение API явно не требуется.
+- Используйте `created_at` и `updated_at` в JSON задач; в PHP используйте свойства и методы в camelCase.
+- Некорректный JSON возвращает `400`; тело JSON, которое не является объектом, или некорректные входные поля возвращают `422`. Отсутствующие ресурсы возвращают `404`; конфликты статусов — `409`.
+- Валидация должна отклонять неверные типы входных данных. Не преобразовывайте массивы, числа или логические значения в строки без явного указания.
+- Возвращайте ошибки API в JSON: `{"error":"message"}` или `{"errors":{"field":["message"]}}`.
+
+## Стиль и документация
+
+- Используйте понятные английские идентификаторы, явные типы PHP там, где это применимо, и небольшие методы с одной ответственностью.
+- Предпочитайте существующие компоненты Symfony и Doctrine собственным утилитам.
+- Не добавляйте комментарии, которые лишь повторяют код.
+- Поддерживайте соответствие аннотаций Swagger/OpenAPI фактическому поведению эндпоинтов. Эндпоинты документации: `/api/doc` и `/api/doc.json`.
+- Обновляйте `README.md` и `docs/TASK_SPEC.md` при изменении видимого пользователю поведения API, инструкций по запуску или архитектурных решений.
+- Точно описывайте изменения, проверки и детали процесса разработки; не утверждайте, что проверки выполнены, если они не проводились.
+
+## Локальные проверки
+
+Запустите сервисы и примените схему:
 
 ```sh
+docker compose up --build -d
 docker compose exec app php bin/console doctrine:migrations:migrate --no-interaction
+```
+
+Проверьте конфигурацию приложения:
+
+```sh
 docker compose exec app php bin/console doctrine:schema:validate
 docker compose exec app php bin/console lint:container
 ```
 
-The PHP built-in server is for development and this test task, not production.
-Do not remove the PostgreSQL volume unless a clean-database run is intended.
+При изменениях API проверяйте затронутые эндпоинты и ошибочные сценарии через Swagger UI или `curl`. В частности, проверяйте некорректные тела запросов, неизвестные идентификаторы, дубликаты имён статусов и попытки удалить защищённые или используемые статусы.
 
-## Git
+Сейчас в проекте не настроен набор тестов PHPUnit. Не сообщайте об успешном прохождении автоматических тестов без их добавления и запуска. Не используйте `docker compose down -v`, если удаление данных локальной базы не является намеренным.
 
-- Work on `main` unless a separate branch is needed for a concrete reason.
-- Use concise English Conventional Commit subjects, such as
-  `fix(api): Protect the default status`.
-- Keep commits coherent; do not rewrite existing history.
-- Do not put tool attribution in branch names or Git metadata.
+## Работа с Git
+
+- Вносите целевые изменения и используйте содержательные сообщения коммитов.
+- Проверяйте изменённые файлы перед коммитом; не включайте посторонние изменения форматирования или сгенерированные файлы.
+- Не переписывайте существующую историю и не используйте принудительную отправку в рамках обычных изменений.
+- По возможности поддерживайте согласованность документации и реализации в рамках одного изменения.
